@@ -6,14 +6,16 @@ fn main() {
 
     println!("Analyzing {} sequences for safety...\n", total_lines);
 
-    for line in input.lines() {
-        let levels: Vec<i32> = line.split(" ").map(|s| s.parse().unwrap()).collect();
-        let is_sequence_safe = is_safe(&levels);
-
-        if is_sequence_safe {
-            safe_lines += 1;
-        }
-    }
+    let safe_lines = input
+        .lines()
+        .filter(|line| {
+            let levels: Vec<i32> = line
+                .split_whitespace()
+                .filter_map(|s| s.parse().ok())
+                .collect();
+            is_safe(&levels)
+        })
+        .count();
 
     println!("safe lines: {}", safe_lines);
 }
