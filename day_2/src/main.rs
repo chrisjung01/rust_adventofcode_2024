@@ -1,11 +1,6 @@
 fn main() {
     let input = include_str!("./input.txt");
 
-    let mut safe_lines = 0;
-    let total_lines = input.lines().count();
-
-    println!("Analyzing {} sequences for safety...\n", total_lines);
-
     let safe_lines = input
         .lines()
         .filter(|line| {
