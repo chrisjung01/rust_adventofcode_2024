@@ -45,6 +45,16 @@ fn main() -> Result<(), Error> {
     left_list.sort();
     right_list.sort();
 
+    let total_distance = calculate_total_distance(&left_list, &right_list);
+    let total_distance_2 = calculate_total_distance_2(&left_list, &right_list);
+
+    println!("Total distance: {}", total_distance);
+    println!("Total distance 2: {}", total_distance_2);
+
+    Ok(())
+}
+
+fn calculate_total_distance(left_list: &[u32], right_list: &[u32]) -> u32 {
     let mut total_distance = 0u32;
     for i in 0..left_list.len() {
         let distance = if left_list[i] > right_list[i] {
@@ -54,9 +64,26 @@ fn main() -> Result<(), Error> {
         };
         total_distance += distance;
     }
+    total_distance
+}
 
-    println!("\nTotal number of pairs: {}", left_list.len());
-    println!("Total distance: {}", total_distance);
+fn calculate_total_distance_2(left_list: &[u32], right_list: &[u32]) -> u32 {
+    let mut total_distance_sum = 0;
 
-    Ok(())
+    // get for loops left side
+    for item in left_list {
+        let mut founded_items = 0;
+        for item2 in right_list {
+            if item.eq(item2) {
+                founded_items += 1;
+            }
+        }
+
+        // multiple founded items by item
+        let total_distance = item * founded_items;
+
+        total_distance_sum += total_distance;
+    }
+
+    total_distance_sum
 }
