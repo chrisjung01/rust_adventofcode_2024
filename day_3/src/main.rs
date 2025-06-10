@@ -1,3 +1,7 @@
+const START_OF_MUL_FUNCTION: &str = "mul(";
+const DO_COMPUTE_NUMBERS: &str = "do()";
+const STOP_COMPUTING_NUMBERS: &str = "don't()";
+
 fn main() {
     let input = include_str!("./input.txt");
     let cleaned_numbers = clean_numbers(&input);
@@ -19,23 +23,40 @@ fn reached_the_end(cleaned_numbers: &[char], start_index: usize, required_length
 }
 
 /// Checks if the current index is the start of a "mul(" function.
-fn is_start_of_mul_function(cleaned_numbers: &[char], index: usize) -> bool {
-    cleaned_numbers.get(index..index + 4) == Some(&['m', 'u', 'l', '('])
+fn search_for_string(cleaned_numbers: &[char], index: usize, search_for: &str) -> bool {
+    cleaned_numbers.get(index..index + search_for.len())
+        == Some(search_for.chars().collect::<Vec<char>>().as_slice())
 }
 
 /// Extracts all multiplication results from the cleaned input.
 fn extract_mul_results(cleaned_numbers: &[char]) -> Vec<i32> {
     let mut numbers = Vec::new();
     let mut i = 0;
+
+    let mut compute_numbers = true;
+
     while i < cleaned_numbers.len() {
         if !reached_the_end(cleaned_numbers, i, 10) {
             break;
         }
-        if is_start_of_mul_function(cleaned_numbers, i) {
-            if let Some((result, next_index)) = parse_mul_at(cleaned_numbers, i) {
-                numbers.push(result);
-                i = next_index;
-                continue;
+
+        if search_for_string(cleaned_numbers, i, DO_COMPUTE_NUMBERS) {
+            compute_numbers = true;
+        }
+
+        if search_for_string(cleaned_numbers, i, STOP_COMPUTING_NUMBERS) {
+            compute_numbers = false;
+            i += 1;
+            continue;
+        }
+
+        if compute_numbers {
+            if search_for_string(cleaned_numbers, i, START_OF_MUL_FUNCTION) {
+                if let Some((result, next_index)) = parse_mul_at(cleaned_numbers, i) {
+                    numbers.push(result);
+                    i = next_index;
+                    continue;
+                }
             }
         }
         i += 1;
